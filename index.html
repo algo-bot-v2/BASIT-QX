@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BASIT QX - AI TRADING BOT</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --bg: #050a14;
+            --card: rgba(15, 23, 42, 0.95);
+            --up: #00ff88;
+            --down: #ff3e3e;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #101e33, var(--bg));
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 380px;
+            background: var(--card);
+            border: 2px solid rgba(0, 242, 255, 0.1);
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+        }
+
+        h2 { text-align: center; color: var(--primary); letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; }
+
+        input, select {
+            width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white; padding: 12px; border-radius: 12px; outline: none; box-sizing: border-box; margin-bottom: 15px;
+        }
+
+        .btn {
+            width: 100%; background: #ffffff; color: #000; border: none; padding: 15px;
+            border-radius: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s;
+        }
+
+        .btn:hover { background: var(--primary); }
+
+        #login-error { color: var(--down); text-align: center; font-size: 13px; display: none; margin-top: 10px; }
+        #bot-interface { display: none; }
+        
+        label { font-size: 10px; color: #8899a6; text-transform: uppercase; display: block; margin-bottom: 5px; }
+
+        .result-panel {
+            margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.4); border-radius: 15px;
+            border: 1px solid var(--primary); display: none;
+        }
+
+        #timer { font-size: 30px; text-align: center; color: var(--primary); font-family: monospace; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="login-section">
+    <h2>BASIT QX LOGIN</h2>
+    <label>Username</label>
+    <input type="text" id="username" placeholder="Enter Username">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Enter Password">
+    <button class="btn" onclick="login()">LOGIN</button>
+    <div id="login-error">❌ Galat Hai! Try Again.</div>
+</div>
+
+<div class="container" id="bot-interface">
+    <h2>BASIT QX BOT</h2>
+    <p id="welcome-msg" style="color:var(--up); font-size:12px; text-align:center;"></p>
+
+    <label>Select Broker</label>
+    <select>
+        <option>Quotex</option>
+        <option>Pocket Option</option>
+    </select>
+
+    <label>Market Type</label>
+    <select id="market">
+        <option>🌙 OTC Market</option>
+        <option>📊 Real Market</option>
+    </select>
+
+    <label>Search Asset</label>
+    <input type="text" id="assetInput" list="allPairs" placeholder="Search Pair...">
+    <datalist id="allPairs">
+        <option value="USD/PKR (OTC)"><option value="USD/INR (OTC)"><option value="GBP/NZD (OTC)">
+        <option value="EUR/USD (OTC)"><option value="USD/BRL (OTC)"><option value="AUD/JPY (OTC)">
+        <option value="USD/TRY (OTC)"><option value="GBP/JPY (OTC)"><option value="CAD/CHF (OTC)">
+    </datalist>
+
+    <label>Timeframe</label>
+    <select id="timeframe">
+        <option value="5">5 Seconds</option>
+        <option value="15">15 Seconds</option>
+        <option value="30">30 Seconds</option>
+        <option value="60">1 Minute</option>
+        <option value="300">5 Minutes</option>
+    </select>
+
+    <button class="btn" id="genBtn" onclick="generateSignal()">GENERATE AI SIGNAL</button>
+    <div id="errorBox" style="color:orange; font-size:11px; text-align:center; display:none; margin-top:10px;">⚠️ Wait! Previous signal active.</div>
+
+    <div class="result-panel" id="resultPanel">
+        <div style="display:flex; justify-content:space-between;">Asset: <span id="resAsset" style="font-weight:bold;">-</span></div>
+        <div style="display:flex; justify-content:space-between; margin-top:5px;">Signal: <span id="resDir" style="font-weight:bold;">-</span></div>
+        <div id="timer">00:00</div>
+    </div>
+</div>
+
+<script>
+    let isWorking = false;
+
+    function login() {
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+        const error = document.getElementById('login-error');
+
+        if(user === "BASIT" && pass === "1") {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('bot-interface').style.display = 'block';
+            document.getElementById('welcome-msg').innerText = "WELCOME TO OUR BOT, BASIT!";
+        } else {
+            error.style.display = 'block';
+        }
+    }
+
+    function generateSignal() {
+        if(isWorking) {
+            document.getElementById('errorBox').style.display = 'block';
+            setTimeout(() => { document.getElementById('errorBox').style.display = 'none'; }, 2000);
+            return;
+        }
+
+        const asset = document.getElementById('assetInput').value || "USD/BRL (OTC)";
+        const timeframe = parseInt(document.getElementById('timeframe').value);
+        
+        isWorking = true;
+        document.getElementById('genBtn').style.opacity = '0.5';
+        document.getElementById('resultPanel').style.display = 'block';
+
+        // Signal Logic
+        const isUp = Math.random() > 0.5;
+        document.getElementById('resAsset').innerText = asset;
+        const dir = document.getElementById('resDir');
+        dir.innerText = isUp ? "UP (CALL)" : "DOWN (PUT)";
+        dir.style.color = isUp ? "#00ff88" : "#ff3e3e";
+
+        // Countdown
+        let time = timeframe;
+        const timerDisplay = document.getElementById('timer');
+        
+        let interval = setInterval(() => {
+            let m = Math.floor(time / 60);
+            let s = time % 60;
+            timerDisplay.innerText = `${m < 10 ? "0"+m : m}:${s < 10 ? "0"+s : s}`;
+            
+            if(--time < 0) {
+                clearInterval(interval);
+                timerDisplay.innerText = "EXPIRED";
+                isWorking = false;
+                document.getElementById('genBtn').style.opacity = '1';
+            }
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>
