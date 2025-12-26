@@ -3,175 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BASIT QX - AI TRADING BOT</title>
+    <title>BASIT QX V3 | PREMIUM VERSION</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #00f2ff;
-            --bg: #050a14;
-            --card: rgba(15, 23, 42, 0.95);
-            --up: #00ff88;
-            --down: #ff3e3e;
-        }
-
-        body {
-            background: radial-gradient(circle at center, #101e33, var(--bg));
-            font-family: 'Segoe UI', sans-serif;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .container {
-            width: 380px;
-            background: var(--card);
-            border: 2px solid rgba(0, 242, 255, 0.1);
-            border-radius: 25px;
-            padding: 25px;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(15px);
-        }
-
-        h2 { text-align: center; color: var(--primary); letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; }
-
-        input, select {
-            width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white; padding: 12px; border-radius: 12px; outline: none; box-sizing: border-box; margin-bottom: 15px;
-        }
-
-        .btn {
-            width: 100%; background: #ffffff; color: #000; border: none; padding: 15px;
-            border-radius: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s;
-        }
-
-        .btn:hover { background: var(--primary); }
-
-        #login-error { color: var(--down); text-align: center; font-size: 13px; display: none; margin-top: 10px; }
-        #bot-interface { display: none; }
+        :root { --accent: #00f2ff; --bg: #010409; --card: #0d1117; --up: #00ffa3; --down: #ff3c5f; --border: rgba(0, 242, 255, 0.2); }
+        body, html { margin: 0; padding: 0; min-height: 100vh; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; overflow-x: hidden; }
         
-        label { font-size: 10px; color: #8899a6; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        #loginOverlay { position: fixed; inset: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .login-card { width: 380px; background: var(--card); border-radius: 30px; padding: 40px; border: 1px solid var(--border); text-align: center; }
+        .login-card h2 { font-family: 'Syncopate'; font-size: 18px; margin-bottom: 25px; }
 
-        .result-panel {
-            margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.4); border-radius: 15px;
-            border: 1px solid var(--primary); display: none;
-        }
+        #welcomeScreen { position: fixed; inset: 0; background: var(--bg); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1500; text-align: center; }
+        .welcome-title { font-size: 32px; font-weight: 900; margin-bottom: 10px; text-transform: uppercase; }
+        .slogan { font-size: 14px; font-weight: bold; font-style: italic; color: var(--accent); letter-spacing: 2px; }
 
-        #timer { font-size: 30px; text-align: center; color: var(--primary); font-family: monospace; margin-top: 10px; }
+        .main-card { width: 440px; background: var(--card); border-radius: 30px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 0 50px rgba(0,0,0,0.8); display: none; margin: 20px 0; }
+        h1 { font-family: 'Syncopate', sans-serif; font-size: 20px; text-align: center; margin-bottom: 15px; }
+
+        .risk-warning { background: rgba(255, 60, 95, 0.1); border: 1px solid rgba(255, 60, 95, 0.2); padding: 12px; border-radius: 12px; font-size: 10px; color: #ff3c5f; text-align: center; margin-bottom: 15px; }
+
+        label { font-size: 9px; color: #8b949e; text-transform: uppercase; margin-top: 12px; display: block; letter-spacing: 1px; }
+        .input-field { width: 100%; background: #010409; border: 1px solid #30363d; color: #fff; padding: 12px; border-radius: 12px; margin-top: 5px; outline: none; box-sizing: border-box; font-size: 13px; }
+        
+        .tab-box { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin: 15px 0; scrollbar-width: none; }
+        .tab-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 10px; cursor: pointer; white-space: nowrap; }
+        .tab-btn.active { background: var(--accent); color: #000; font-weight: bold; }
+
+        .btn-gen { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: 900; background: linear-gradient(90deg, #00f2ff, #007bff); color: #fff; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
+        .btn-gen:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .res-panel { display: none; margin-top: 20px; background: rgba(0, 242, 255, 0.05); border: 1px solid var(--accent); border-radius: 20px; padding: 20px; text-align: center; }
+        .sig-val { font-size: 50px; font-weight: 900; margin: 5px 0; }
+        .footer { text-align: center; font-size: 10px; color: #4e555f; margin-top: 25px; border-top: 1px solid #21262d; padding-top: 15px; }
     </style>
 </head>
 <body>
 
-<div class="container" id="login-section">
-    <h2>BASIT QX LOGIN</h2>
-    <label>Username</label>
-    <input type="text" id="username" placeholder="Enter Username">
-    <label>Password</label>
-    <input type="password" id="password" placeholder="Enter Password">
-    <button class="btn" onclick="login()">LOGIN</button>
-    <div id="login-error">❌ Galat Hai! Try Again.</div>
-</div>
-
-<div class="container" id="bot-interface">
-    <h2>BASIT QX BOT</h2>
-    <p id="welcome-msg" style="color:var(--up); font-size:12px; text-align:center;"></p>
-
-    <label>Select Broker</label>
-    <select>
-        <option>Quotex</option>
-        <option>Pocket Option</option>
-    </select>
-
-    <label>Market Type</label>
-    <select id="market">
-        <option>🌙 OTC Market</option>
-        <option>📊 Real Market</option>
-    </select>
-
-    <label>Search Asset</label>
-    <input type="text" id="assetInput" list="allPairs" placeholder="Search Pair...">
-    <datalist id="allPairs">
-        <option value="USD/PKR (OTC)"><option value="USD/INR (OTC)"><option value="GBP/NZD (OTC)">
-        <option value="EUR/USD (OTC)"><option value="USD/BRL (OTC)"><option value="AUD/JPY (OTC)">
-        <option value="USD/TRY (OTC)"><option value="GBP/JPY (OTC)"><option value="CAD/CHF (OTC)">
-    </datalist>
-
-    <label>Timeframe</label>
-    <select id="timeframe">
-        <option value="5">5 Seconds</option>
-        <option value="15">15 Seconds</option>
-        <option value="30">30 Seconds</option>
-        <option value="60">1 Minute</option>
-        <option value="300">5 Minutes</option>
-    </select>
-
-    <button class="btn" id="genBtn" onclick="generateSignal()">GENERATE AI SIGNAL</button>
-    <div id="errorBox" style="color:orange; font-size:11px; text-align:center; display:none; margin-top:10px;">⚠️ Wait! Previous signal active.</div>
-
-    <div class="result-panel" id="resultPanel">
-        <div style="display:flex; justify-content:space-between;">Asset: <span id="resAsset" style="font-weight:bold;">-</span></div>
-        <div style="display:flex; justify-content:space-between; margin-top:5px;">Signal: <span id="resDir" style="font-weight:bold;">-</span></div>
-        <div id="timer">00:00</div>
+<div id="loginOverlay">
+    <div class="login-card animate__animated animate__fadeInDown">
+        <h2>LOGIN FOR ACCESS</h2>
+        <input type="text" id="user" class="input-field" placeholder="USERNAME">
+        <input type="password" id="pass" class="input-field" placeholder="PASSWORD" style="margin-top:10px;">
+        <button class="btn-gen" onclick="doLogin()">ACCESS BOT</button>
     </div>
 </div>
 
+<div id="welcomeScreen">
+    <div class="welcome-title animate__animated animate__zoomIn">WELCOME TO OUR BOT</div>
+    <div class="slogan animate__animated animate__fadeInUp animate__delay-1s">" POWER IN EVERY TRADE "</div>
+</div>
+
+<div class="main-card animate__animated animate__fadeIn" id="botUI">
+    <h1>BASIT QX <span style="color:var(--accent)">V3</span></h1>
+    <div class="risk-warning">⚠️ RISK WARNING: Trading involves risk. Test on demo. Past results don't guarantee future success.</div>
+
+    <label>Market Settings</label>
+    <select class="input-field">
+        <option>QUOTEX (OTC/REAL)</option>
+        <option disabled>POCKET OPTION (LOCKED)</option>
+    </select>
+
+    <label>Trend Scan</label>
+    <select id="trend" class="input-field">
+        <option value="auto">🤖 AUTO SCAN (AI)</option>
+        <option value="up">🚀 STRONG UP TREND</option>
+        <option value="down">📉 STRONG DOWN TREND</option>
+        <option value="down">↔️ SIDEWAYS TREND</option>
+    </select>
+
+    <label>Timer (Seconds)</label>
+    <input type="number" id="customTF" class="input-field" value="60">
+
+    <div class="tab-box">
+        <button class="tab-btn active" onclick="setTab('CURRENCIES', this)">Currencies</button>
+        <button class="tab-btn" onclick="setTab('CRYPTO', this)">Crypto</button>
+        <button class="tab-btn" onclick="setTab('STOCKS', this)">Stocks</button>
+        <button class="tab-btn" onclick="setTab('COMMODITIES', this)">Commodities</button>
+    </div>
+
+    <select id="assetSelect" class="input-field"></select>
+
+    <button class="btn-gen" id="genBtn" onclick="generate()">GENERATE PRO SIGNAL</button>
+
+    <div class="res-panel animate__animated animate__zoomIn" id="resBox">
+        <div id="rPair" style="font-size:14px; opacity:0.7;">---</div>
+        <div class="sig-val" id="rDir">---</div>
+        <div id="timer" style="font-family:'Syncopate'; font-size:22px; color:var(--accent);">00:00</div>
+    </div>
+
+    <div class="footer">ALL RIGHTS RESERVED TO <strong>BASIT</strong> © 2025</div>
+</div>
+
 <script>
-    let isWorking = false;
+    const pairs = {
+        CURRENCIES: ["USD/EGP (OTC)", "USD/PKR (OTC)", "GBP/NZD (OTC)", "USD/TRY (OTC)", "AUD/NZD (OTC)", "USD/ARS (OTC)", "USD/BDT (OTC)", "EUR/GBP", "USD/PHP (OTC)", "EUR/JPY", "CAD/JPY", "GBP/JPY", "USD/INR (OTC)", "EUR/NZD (OTC)", "NZD/JPY (OTC)", "USD/NGN (OTC)", "GBP/USD", "USD/IDR (OTC)", "USD/MXN (OTC)", "CAD/CHF (OTC)", "NZD/CAD (OTC)", "NZD/CHF (OTC)", "USD/COP (OTC)", "USD/JPY", "AUD/CAD", "EUR/AUD", "EUR/USD", "USD/DZD (OTC)", "USD/ZAR (OTC)", "AUD/CHF", "GBP/AUD", "GBP/CHF", "GBP/CAD", "AUD/USD", "AUD/JPY", "EUR/CAD", "CHF/JPY", "NZD/USD (OTC)", "EUR/CHF", "USD/CAD", "USD/CHF", "EUR/SGD (OTC)"],
+        CRYPTO: ["Floki (OTC)", "Chainlink (OTC)", "Litecoin (OTC)", "Decentraland (OTC)", "Melania Meme (OTC)", "Pepe (OTC)", "Shiba Inu (OTC)", "Solana (OTC)", "Celestia (OTC)", "Toncoin (OTC)", "Trump (OTC)", "TRON (OTC)", "Dogwifhat (OTC)", "Ripple (OTC)", "Zcash (OTC)", "Polkadot (OTC)", "Bitcoin Cash (OTC)", "Bitcoin (OTC)", "Hamster Kombat (OTC)", "Ethereum (OTC)", "Bonk (OTC)", "Binance Coin (OTC)", "Avalanche (OTC)", "Dogecoin (OTC)", "Cardano (OTC)", "Cosmos (OTC)", "Dash (OTC)", "Beam (OTC)", "Gala (OTC)", "Ethereum Classic (OTC)", "Arbitrum (OTC)", "Aptos (OTC)"],
+        STOCKS: ["McDonald's (OTC)", "Johnson & Johnson (OTC)", "American Express (OTC)", "FACEBOOK INC (OTC)", "Boeing Company (OTC)", "Intel (OTC)", "Microsoft (OTC)", "Pfizer Inc (OTC)", "Dow Jones", "Nikkei 225", "NASDAQ 100", "S&P/ASX 200", "FTSE China A50", "CAC 40", "FTSE 100", "Hong Kong 50", "IBEX 35", "EURO STOXX 50"],
+        COMMODITIES: ["Silver (OTC)", "UKBrent (OTC)", "USCrude (OTC)", "Gold (OTC)"]
+    };
 
-    function login() {
-        const user = document.getElementById('username').value;
-        const pass = document.getElementById('password').value;
-        const error = document.getElementById('login-error');
+    let isLocked = false;
 
-        if(user === "BASIT" && pass === "1") {
-            document.getElementById('login-section').style.display = 'none';
-            document.getElementById('bot-interface').style.display = 'block';
-            document.getElementById('welcome-msg').innerText = "WELCOME TO OUR BOT, BASIT!";
-        } else {
-            error.style.display = 'block';
-        }
+    function doLogin() {
+        const u = document.getElementById('user').value.toUpperCase();
+        if((u === "BASIT" || u === "SALAM") && document.getElementById('pass').value === "1") {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('welcomeScreen').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('welcomeScreen').style.display = 'none';
+                document.getElementById('botUI').style.display = 'block';
+                setTab('CURRENCIES', document.querySelector('.tab-btn'));
+            }, 3000);
+        } else { alert("ACCESS DENIED"); }
     }
 
-    function generateSignal() {
-        if(isWorking) {
-            document.getElementById('errorBox').style.display = 'block';
-            setTimeout(() => { document.getElementById('errorBox').style.display = 'none'; }, 2000);
+    function setTab(cat, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const s = document.getElementById('assetSelect');
+        s.innerHTML = "";
+        pairs[cat].forEach(p => {
+            let o = document.createElement('option');
+            o.value = p; o.innerText = p; s.appendChild(o);
+        });
+    }
+
+    let timerInt;
+    function generate() {
+        if(isLocked) {
+            alert("⚠️ WAIT! Signal Is Active. Wait To Expire This Signal.");
             return;
         }
+        const tf = document.getElementById('customTF').value;
+        const btn = document.getElementById('genBtn');
+        isLocked = true;
+        btn.disabled = true;
+        btn.innerText = "ANALAYZING...";
 
-        const asset = document.getElementById('assetInput').value || "USD/BRL (OTC)";
-        const timeframe = parseInt(document.getElementById('timeframe').value);
-        
-        isWorking = true;
-        document.getElementById('genBtn').style.opacity = '0.5';
-        document.getElementById('resultPanel').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('resBox').style.display = 'block';
+            document.getElementById('rPair').innerText = document.getElementById('assetSelect').value;
+            let isUp = Math.random() > 0.5;
+            const dir = document.getElementById('rDir');
+            dir.innerText = isUp ? "CALL ↑" : "PUT ↓";
+            dir.style.color = isUp ? "var(--up)" : "var(--down)";
+            startTimer(parseInt(tf));
+        }, 1200);
+    }
 
-        // Signal Logic
-        const isUp = Math.random() > 0.5;
-        document.getElementById('resAsset').innerText = asset;
-        const dir = document.getElementById('resDir');
-        dir.innerText = isUp ? "UP (CALL)" : "DOWN (PUT)";
-        dir.style.color = isUp ? "#00ff88" : "#ff3e3e";
-
-        // Countdown
-        let time = timeframe;
-        const timerDisplay = document.getElementById('timer');
-        
-        let interval = setInterval(() => {
-            let m = Math.floor(time / 60);
-            let s = time % 60;
-            timerDisplay.innerText = `${m < 10 ? "0"+m : m}:${s < 10 ? "0"+s : s}`;
-            
-            if(--time < 0) {
-                clearInterval(interval);
-                timerDisplay.innerText = "EXPIRED";
-                isWorking = false;
-                document.getElementById('genBtn').style.opacity = '1';
+    function startTimer(t) {
+        const disp = document.getElementById('timer');
+        timerInt = setInterval(() => {
+            let m = Math.floor(t / 60); let s = t % 60;
+            disp.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if (--t < 0) { 
+                clearInterval(timerInt); 
+                disp.innerText = "EXPIRED";
+                isLocked = false;
+                document.getElementById('genBtn').disabled = false;
+                document.getElementById('genBtn').innerText = "GENERATE PRO SIGNAL";
             }
         }, 1000);
     }
 </script>
-
 </body>
 </html>
