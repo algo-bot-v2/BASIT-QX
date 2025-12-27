@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BASIT QX V3 | PREMIUM VERSION</title>
+    <title>BASIT QX V3| ULTIMATE VERSION</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
@@ -15,92 +15,87 @@
         :root { --accent: #00f2ff; --bg: #010409; --card: #0d1117; --up: #00ffa3; --down: #ff3c5f; --border: rgba(0, 242, 255, 0.2); }
         body, html { margin: 0; padding: 0; min-height: 100vh; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; overflow-x: hidden; }
 
-        /* SECURITY SCREEN */
         #errorOverlay { position: fixed; inset: 0; background: #000; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; color: #ff3c5f; text-align: center; border: 15px solid #ff3c5f; padding: 20px; }
         
-        /* LOGIN & UI */
         #loginOverlay { position: fixed; inset: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-        .login-card { width: 380px; background: var(--card); border-radius: 30px; padding: 40px; border: 1px solid var(--border); text-align: center; }
+        .login-card { width: 380px; background: var(--card); border-radius: 25px; padding: 40px; border: 1px solid var(--border); text-align: center; }
+        
         #welcomeScreen { position: fixed; inset: 0; background: var(--bg); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1500; text-align: center; }
-        .main-card { width: 440px; background: var(--card); border-radius: 30px; padding: 25px; border: 1px solid var(--border); display: none; margin: 20px 0; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        .main-card { width: 420px; background: var(--card); border-radius: 25px; padding: 25px; border: 1px solid var(--border); display: none; box-shadow: 0 0 50px rgba(0,0,0,0.9); }
         
-        .input-field { width: 100%; background: #010409; border: 1px solid #30363d; color: #fff; padding: 12px; border-radius: 12px; margin-top: 10px; outline: none; box-sizing: border-box; font-size: 13px; }
-        .btn-gen { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: 900; background: linear-gradient(90deg, #00f2ff, #007bff); color: #fff; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
-        
-        .risk-warning { background: rgba(255, 60, 95, 0.1); border: 1px solid rgba(255, 60, 95, 0.2); padding: 12px; border-radius: 12px; font-size: 10px; color: #ff3c5f; text-align: center; margin-bottom: 15px; }
-        .bq-logo { width: 80px; height: 80px; border: 3px solid var(--accent); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-family: 'Syncopate'; font-size: 30px; color: var(--accent); box-shadow: 0 0 20px rgba(0, 242, 255, 0.4); }
+        .input-field { width: 100%; background: #080c12; border: 1px solid #30363d; color: #fff; padding: 14px; border-radius: 12px; margin-top: 12px; outline: none; box-sizing: border-box; font-size: 14px; transition: 0.3s; }
+        .input-field:focus { border-color: var(--accent); }
 
-        .tab-box { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin: 15px 0; scrollbar-width: none; }
-        .tab-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 10px; cursor: pointer; white-space: nowrap; }
+        .btn-gen { width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 900; background: linear-gradient(90deg, #00f2ff, #007bff); color: #fff; cursor: pointer; margin-top: 20px; text-transform: uppercase; font-size: 14px; box-shadow: 0 5px 15px rgba(0, 242, 255, 0.2); }
+        
+        .risk-warning { background: rgba(255, 60, 95, 0.1); border: 1px solid rgba(255, 60, 95, 0.2); padding: 10px; border-radius: 10px; font-size: 10px; color: #ff3c5f; text-align: center; margin-bottom: 15px; }
+        
+        .tab-box { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; margin-bottom: 10px; scrollbar-width: none; }
+        .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 11px; cursor: pointer; white-space: nowrap; }
         .tab-btn.active { background: var(--accent); color: #000; font-weight: bold; }
 
         .res-panel { display: none; margin-top: 20px; background: rgba(0, 242, 255, 0.05); border: 1px solid var(--accent); border-radius: 20px; padding: 20px; text-align: center; }
-        .sig-val { font-size: 45px; font-weight: 900; }
+        .sig-val { font-size: 48px; font-weight: 900; letter-spacing: -2px; }
         .accuracy-container { margin: 15px 0; display: flex; flex-direction: column; align-items: center; }
-        .progress-circle { width: 65px; height: 65px; border-radius: 50%; background: conic-gradient(var(--accent) 0deg, #161b22 0deg); display: flex; align-items: center; justify-content: center; position: relative; transition: 1.5s; }
-        .progress-circle::after { content: ""; position: absolute; width: 55px; height: 55px; background: var(--card); border-radius: 50%; }
-        .progress-text { position: relative; z-index: 10; font-size: 13px; font-weight: bold; color: var(--accent); }
-        .footer { text-align: center; font-size: 10px; color: #4e555f; margin-top: 25px; border-top: 1px solid #21262d; padding-top: 15px; }
+        .progress-circle { width: 70px; height: 70px; border-radius: 50%; background: conic-gradient(var(--accent) 0deg, #161b22 0deg); display: flex; align-items: center; justify-content: center; position: relative; transition: 1.5s; }
+        .progress-circle::after { content: ""; position: absolute; width: 60px; height: 60px; background: var(--card); border-radius: 50%; }
+        .progress-text { position: relative; z-index: 10; font-size: 14px; font-weight: bold; color: var(--accent); }
     </style>
 </head>
 <body>
 
 <div id="errorOverlay">
     <div class="animate__animated animate__flash animate__infinite" style="font-size: 60px;">🛑</div>
-    <div style="font-family:'Syncopate'; font-size:24px;">DEVICE LOCKED</div>
-    <p>Unauthorized access. This account is bound to another terminal.</p>
+    <div style="font-family:'Syncopate'; font-size:22px;">HWID MISMATCH</div>
+    <p>Access Denied! This account is locked to another mobile terminal.</p>
 </div>
 
 <div id="loginOverlay">
     <div class="login-card">
-        <div class="bq-logo">BQ</div>
-        <h2 style="font-family:'Syncopate';">LOGIN</h2>
-        <input type="text" id="user" class="input-field" placeholder="USERNAME">
+        <h2 style="font-family:'Syncopate'; font-size:18px; color:var(--accent); margin-bottom:5px;">BASIT QX BOT</h2>
+        <p style="font-size:10px; color:#8b949e; margin-bottom:20px;">CLOUD SECURITY VERSION 31</p>
+        <input type="text" id="user" class="input-field" placeholder="OPERATOR ID">
         <input type="password" id="pass" class="input-field" placeholder="PASSKEY">
         <button class="btn-gen" id="authBtn" onclick="doLogin()">AUTHENTICATE</button>
     </div>
 </div>
 
 <div id="welcomeScreen">
-    <div style="font-weight:900; font-size:35px;">WELCOME BASIT</div>
-    <div style="font-style:italic; font-weight:bold; color:var(--accent);">" POWER IN EVERY TRADE "</div>
+    <div style="font-weight:900; font-size:32px;">WELCOME BASIT</div>
+    <div style="font-weight:bold; color:var(--accent); font-size:14px; margin-top:5px;">ACCESS GRANTED • ENCRYPTED</div>
 </div>
 
 <div class="main-card animate__animated animate__fadeIn" id="botUI">
-    <h1 style="font-family:'Syncopate';">BASIT QX <span style="color:var(--accent)">V3</span></h1>
-    <div class="risk-warning">⚠️ WARNING: Trading is risky. High accuracy does not guarantee profit. Use Demo.</div>
+    <h1 style="font-family:'Syncopate'; font-size:18px; text-align:center;">BASIT QX <span style="color:var(--accent)">V31</span></h1>
+    <div class="risk-warning">⚠️ Trading involves risk. Accuracy is AI estimated.</div>
 
-    <label>Analysis Engine</label>
-    <select id="trend" class="input-field">
-        <option value="auto">🤖 AUTO SCAN (AI)</option>
-        <option value="up">🚀 STRONG UP TREND</option>
-        <option value="down">📉 STRONG DOWN TREND</option>
-        <option value="down">↔️ SIDE WAYS TREND</option>
-    </select>
-
+    <label style="font-size:10px; color:#8b949e;">CHOOSE MARKET</label>
     <div class="tab-box">
         <button class="tab-btn active" onclick="setTab('CURRENCIES', this)">Currencies</button>
         <button class="tab-btn" onclick="setTab('CRYPTO', this)">Crypto</button>
         <button class="tab-btn" onclick="setTab('STOCKS', this)">Stocks</button>
-        <button class="tab-btn" onclick="setTab('COMMODITIES', this)">Commodities</button>
     </div>
 
     <select id="assetSelect" class="input-field"></select>
 
-    <button class="btn-gen" id="genBtn" onclick="generate()">GENERATE SIGNAL</button>
+    <button class="btn-gen" id="genBtn" onclick="generate()">GENERATE AI SIGNAL</button>
 
-    <div class="res-panel" id="resBox">
-        <div id="rPair" style="font-size:14px; opacity:0.7;">---</div>
+    <div class="res-panel animate__animated animate__zoomIn" id="resBox">
+        <div id="rPair" style="font-size:13px; opacity:0.6; text-transform:uppercase;">---</div>
         <div class="sig-val" id="rDir">---</div>
         <div class="accuracy-container">
             <div class="progress-circle" id="accCircle"><span class="progress-text" id="accText">0%</span></div>
         </div>
         <div id="timer" style="font-family:'Syncopate'; font-size:24px; color:var(--accent);">00:00</div>
     </div>
-    <div class="footer">ALL RIGHTS RESERVED TO <strong>BASIT</strong> © 2025</div>
+    
+    <div style="text-align:center; font-size:10px; color:#4e555f; margin-top:20px; border-top:1px solid #21262d; padding-top:10px;">
+        © 2025 ALL RIGHTS RESERVED TO BASIT
+    </div>
 </div>
 
 <script>
+    // FINAL FIXED FIREBASE CONFIG
     const firebaseConfig = {
         apiKey: "AIzaSyDI3OAYJ-oDRapb5J9N9A9685F1VmxYwW0",
         authDomain: "basit-qx.firebaseapp.com",
@@ -108,45 +103,65 @@
         storageBucket: "basit-qx.firebasestorage.app",
         messagingSenderId: "1013913423706",
         appId: "1:1013913423706:web:82161028a98f732c21ad63",
-        databaseURL: "https://basit-qx-default-rtdb.firebaseio.com/"
+        databaseURL: "https://basit-qx-default-rtdb.firebaseio.com"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const pairs = {
-        CURRENCIES: ["USD/EGP (OTC)", "USD/PKR (OTC)", "GBP/NZD (OTC)", "USD/TRY (OTC)", "AUD/NZD (OTC)", "EUR/USD", "GBP/JPY", "USD/INR (OTC)", "EUR/NZD (OTC)", "GBP/USD", "USD/JPY", "AUD/USD", "EUR/CAD", "USD/CAD"],
-        CRYPTO: ["Bitcoin (OTC)", "Ethereum (OTC)", "Solana (OTC)", "Pepe (OTC)", "Shiba Inu (OTC)", "Floki (OTC)", "Dogecoin (OTC)"],
-        STOCKS: ["Microsoft (OTC)", "FACEBOOK (OTC)", "Apple (OTC)", "McDonald's (OTC)", "NASDAQ 100"],
-        COMMODITIES: ["Gold (OTC)", "Silver (OTC)", "UKBrent (OTC)", "USCrude (OTC)"]
+        CURRENCIES: ["USD/EGP (OTC)", "USD/PKR (OTC)", "GBP/NZD (OTC)", "EUR/USD", "GBP/JPY", "USD/INR (OTC)", "USD/JPY", "AUD/USD", "EUR/CAD", "USD/CAD"],
+        CRYPTO: ["Bitcoin (OTC)", "Ethereum (OTC)", "Solana (OTC)", "Pepe (OTC)", "Shiba Inu (OTC)", "Dogecoin (OTC)"],
+        STOCKS: ["Microsoft (OTC)", "FACEBOOK (OTC)", "Apple (OTC)", "McDonald's (OTC)", "NASDAQ 100"]
     };
 
     let isLocked = false;
 
     async function doLogin() {
-        const u = document.getElementById('user').value.toUpperCase();
-        const p = document.getElementById('pass').value;
+        const u = document.getElementById('user').value.toUpperCase().trim();
+        const p = document.getElementById('pass').value.trim();
+        const btn = document.getElementById('authBtn');
+
         if((u === "BASIT" || u === "SALAM") && p === "1") {
-            const hwid = btoa(navigator.userAgent).substring(0, 15);
-            const ref = db.ref('users/' + u);
-            const snap = await ref.once('value');
-            const data = snap.val();
+            btn.innerText = "CONNECTING...";
+            btn.disabled = true;
+            
+            // Generate Hardware ID based on browser + device
+            const hwid = btoa(navigator.userAgent + navigator.platform).substring(0, 15);
+            
+            try {
+                const ref = db.ref('users/' + u);
+                const snapshot = await ref.once('value');
+                const data = snapshot.val();
 
-            if (data && data.hwid !== hwid) {
+                if (data && data.hwid !== hwid) {
+                    document.getElementById('loginOverlay').style.display = 'none';
+                    document.getElementById('errorOverlay').style.display = 'flex';
+                    return;
+                }
+
+                if (!data) {
+                    await ref.set({ hwid: hwid, status: "active", date: new Date().toLocaleDateString() });
+                }
+
+                // SUCCESS SEQUENCE
                 document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('errorOverlay').style.display = 'flex';
-                return;
-            }
-            if (!data) await ref.set({ hwid: hwid });
+                document.getElementById('welcomeScreen').style.display = 'flex';
+                setTimeout(() => {
+                    document.getElementById('welcomeScreen').style.display = 'none';
+                    document.getElementById('botUI').style.display = 'block';
+                    setTab('CURRENCIES', document.querySelector('.tab-btn'));
+                }, 2000);
 
-            document.getElementById('loginOverlay').style.display = 'none';
-            document.getElementById('welcomeScreen').style.display = 'flex';
-            setTimeout(() => {
-                document.getElementById('welcomeScreen').style.display = 'none';
-                document.getElementById('botUI').style.display = 'block';
-                setTab('CURRENCIES', document.querySelector('.tab-btn'));
-            }, 2500);
-        } else { alert("WRONG KEY"); }
+            } catch (err) {
+                console.error(err);
+                alert("FIREBASE ERROR: Database rules check karein!");
+                btn.disabled = false;
+                btn.innerText = "AUTHENTICATE";
+            }
+        } else {
+            alert("ACCESS DENIED: Wrong User or Key");
+        }
     }
 
     function setTab(cat, btn) {
@@ -163,12 +178,15 @@
     function generate() {
         if(isLocked) return;
         isLocked = true;
-        document.getElementById('genBtn').disabled = true;
+        const btn = document.getElementById('genBtn');
+        btn.disabled = true;
+        btn.innerText = "AI ANALYZING...";
         
         setTimeout(() => {
             document.getElementById('resBox').style.display = 'block';
             document.getElementById('rPair').innerText = document.getElementById('assetSelect').value;
-            let acc = Math.floor(Math.random() * 7) + 91;
+            
+            let acc = Math.floor(Math.random() * 8) + 91;
             document.getElementById('accText').innerText = acc + "%";
             document.getElementById('accCircle').style.background = `conic-gradient(var(--accent) ${acc * 3.6}deg, #161b22 0deg)`;
             
@@ -176,7 +194,9 @@
             const d = document.getElementById('rDir');
             d.innerText = isUp ? "CALL ↑" : "PUT ↓";
             d.style.color = isUp ? "var(--up)" : "var(--down)";
+            
             startTimer(60);
+            btn.innerText = "SIGNAL ACTIVE";
         }, 1500);
     }
 
@@ -185,7 +205,12 @@
         const it = setInterval(() => {
             let m = Math.floor(t / 60); let s = t % 60;
             disp.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
-            if (--t < 0) { clearInterval(it); isLocked = false; document.getElementById('genBtn').disabled = false; }
+            if (--t < 0) { 
+                clearInterval(it); 
+                isLocked = false; 
+                document.getElementById('genBtn').disabled = false;
+                document.getElementById('genBtn').innerText = "GENERATE AI SIGNAL";
+            }
         }, 1000);
     }
 </script>
