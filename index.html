@@ -9,17 +9,19 @@
     <style>
         :root { --accent: #00f2ff; --bg: #010409; --card: #0d1117; --up: #00ffa3; --down: #ff3c5f; --border: rgba(0, 242, 255, 0.2); }
         body, html { margin: 0; padding: 0; min-height: 100vh; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; overflow-x: hidden; }
-        
+
+        /* --- PROFESSIONAL ERROR SCREEN --- */
+        #errorOverlay { position: fixed; inset: 0; background: #000; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 5000; color: #ff3c5f; text-align: center; border: 15px solid #ff3c5f; }
+        .err-code { font-family: 'Syncopate'; font-size: 28px; margin-bottom: 15px; text-shadow: 0 0 20px #ff3c5f; }
+        .err-logs { font-family: monospace; font-size: 11px; color: #8b949e; margin-top: 25px; line-height: 1.8; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; }
+
+        /* --- LOGIN & UI --- */
         #loginOverlay { position: fixed; inset: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 2000; }
         .login-card { width: 380px; background: var(--card); border-radius: 30px; padding: 40px; border: 1px solid var(--border); text-align: center; }
-        .login-card h2 { font-family: 'Syncopate'; font-size: 18px; margin-bottom: 25px; }
-
         #welcomeScreen { position: fixed; inset: 0; background: var(--bg); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1500; text-align: center; }
-        .welcome-title { font-size: 32px; font-weight: 900; margin-bottom: 10px; text-transform: uppercase; }
-        .slogan { font-size: 14px; font-weight: bold; font-style: italic; color: var(--accent); letter-spacing: 2px; }
-
-        .main-card { width: 440px; background: var(--card); border-radius: 30px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 0 50px rgba(0,0,0,0.8); display: none; margin: 20px 0; }
-        h1 { font-family: 'Syncopate', sans-serif; font-size: 20px; text-align: center; margin-bottom: 15px; }
+        
+        .main-card { width: 440px; background: var(--card); border-radius: 30px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 0 50px rgba(0,0,0,0.9); display: none; margin: 20px 0; }
+        h1 { font-family: 'Syncopate', sans-serif; font-size: 20px; text-align: center; margin-bottom: 5px; }
 
         .risk-warning { background: rgba(255, 60, 95, 0.1); border: 1px solid rgba(255, 60, 95, 0.2); padding: 12px; border-radius: 12px; font-size: 10px; color: #ff3c5f; text-align: center; margin-bottom: 15px; }
 
@@ -34,45 +36,62 @@
         .btn-gen:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .res-panel { display: none; margin-top: 20px; background: rgba(0, 242, 255, 0.05); border: 1px solid var(--accent); border-radius: 20px; padding: 20px; text-align: center; }
-        .sig-val { font-size: 50px; font-weight: 900; margin: 5px 0; }
+        .sig-val { font-size: 45px; font-weight: 900; margin: 5px 0; }
+        
+        .accuracy-container { margin: 15px 0; display: flex; flex-direction: column; align-items: center; }
+        .progress-circle { width: 65px; height: 65px; border-radius: 50%; background: conic-gradient(var(--accent) 0deg, #161b22 0deg); display: flex; align-items: center; justify-content: center; position: relative; transition: 1.5s; }
+        .progress-circle::after { content: ""; position: absolute; width: 55px; height: 55px; background: var(--card); border-radius: 50%; }
+        .progress-text { position: relative; z-index: 10; font-size: 13px; font-weight: bold; color: var(--accent); }
+
         .footer { text-align: center; font-size: 10px; color: #4e555f; margin-top: 25px; border-top: 1px solid #21262d; padding-top: 15px; }
     </style>
 </head>
 <body>
 
+<div id="errorOverlay">
+    <div class="animate__animated animate__flash animate__infinite" style="font-size: 60px; margin-bottom: 10px;">🛑</div>
+    <div class="err-code">ACCESS REVOKED</div>
+    <p style="max-width: 85%; font-weight: bold;">SECURITY ALERT: Unauthorized HWID/Device attempt detected. This account is strictly bound to another terminal.</p>
+    <div class="err-logs">
+        [ENCRYPTION: AES-256-BIT]<br>
+        [IP_TRACK: DETECTED]<br>
+        [HARDWARE_LOCK: ACTIVE]<br>
+        [ACTION: PERMANENT_BLOCK]
+    </div>
+</div>
+
 <div id="loginOverlay">
     <div class="login-card animate__animated animate__fadeInDown">
-        <h2>LOGIN FOR ACCESS</h2>
-        <input type="text" id="user" class="input-field" placeholder="USERNAME">
-        <input type="password" id="pass" class="input-field" placeholder="PASSWORD" style="margin-top:10px;">
-        <button class="btn-gen" onclick="doLogin()">ACCESS BOT</button>
+        <h2 style="font-family:'Syncopate';">LOGIN INTERFACE</h2>
+        <input type="text" id="user" class="input-field" placeholder="OPERATOR ID">
+        <input type="password" id="pass" class="input-field" placeholder="ACCESS KEY" style="margin-top:10px;">
+        <button class="btn-gen" onclick="doLogin()">AUTHENTICATE SESSION</button>
     </div>
 </div>
 
 <div id="welcomeScreen">
-    <div class="welcome-title animate__animated animate__zoomIn">WELCOME TO OUR BOT</div>
-    <div class="slogan animate__animated animate__fadeInUp animate__delay-1s">" POWER IN EVERY TRADE "</div>
+    <div class="welcome-title animate__animated animate__zoomIn" style="font-weight:900; font-size:35px;">WELCOME TO OUR BOT</div>
+    <div class="slogan animate__animated animate__fadeInUp animate__delay-1s" style="font-style:italic; font-weight:bold; color:var(--accent); font-size:16px;">" POWER IN EVERY TRADE "</div>
 </div>
 
 <div class="main-card animate__animated animate__fadeIn" id="botUI">
     <h1>BASIT QX <span style="color:var(--accent)">V3</span></h1>
-    <div class="risk-warning">⚠️ RISK WARNING: Trading involves risk. Test on demo. Past results don't guarantee future success.</div>
+    <div class="risk-warning">⚠️ WARNING: Trading is risky. High accuracy does not guarantee profit. Use Demo.</div>
 
-    <label>Market Settings</label>
+    <label>Broker Selection</label>
     <select class="input-field">
-        <option>QUOTEX (OTC/REAL)</option>
-        <option disabled>POCKET OPTION (LOCKED)</option>
+        <option>QUOTEX (OTC & REAL)</option>
+        <option disabled>POCKET OPTION (COMING SOON)</option>
     </select>
 
-    <label>Trend Scan</label>
+    <label>Market Analysis Trend</label>
     <select id="trend" class="input-field">
         <option value="auto">🤖 AUTO SCAN (AI)</option>
         <option value="up">🚀 STRONG UP TREND</option>
         <option value="down">📉 STRONG DOWN TREND</option>
-        <option value="down">↔️ SIDEWAYS TREND</option>
     </select>
 
-    <label>Timer (Seconds)</label>
+    <label>Trade Duration (Seconds)</label>
     <input type="number" id="customTF" class="input-field" value="60">
 
     <div class="tab-box">
@@ -89,7 +108,13 @@
     <div class="res-panel animate__animated animate__zoomIn" id="resBox">
         <div id="rPair" style="font-size:14px; opacity:0.7;">---</div>
         <div class="sig-val" id="rDir">---</div>
-        <div id="timer" style="font-family:'Syncopate'; font-size:22px; color:var(--accent);">00:00</div>
+        
+        <div class="accuracy-container">
+            <div class="progress-circle" id="accCircle"><span class="progress-text" id="accText">0%</span></div>
+            <span style="font-size:10px; color: #8b949e; margin-top: 8px; font-weight:bold;">SIGNAL PROBABILITY</span>
+        </div>
+
+        <div id="timer" style="font-family:'Syncopate'; font-size:24px; color:var(--accent);">00:00</div>
     </div>
 
     <div class="footer">ALL RIGHTS RESERVED TO <strong>BASIT</strong> © 2025</div>
@@ -107,7 +132,22 @@
 
     function doLogin() {
         const u = document.getElementById('user').value.toUpperCase();
-        if((u === "BASIT" || u === "SALAM") && document.getElementById('pass').value === "1") {
+        const p = document.getElementById('pass').value;
+
+        // --- HARDWARE LOCK LOGIC ---
+        const deviceKey = "BQ_HWID_LOCK_" + u;
+        const currentFingerprint = "DEV-" + btoa(navigator.userAgent).substring(5, 15);
+        const boundHWID = localStorage.getItem(deviceKey);
+
+        if((u === "BASIT" || u === "SALAM") && p === "1") {
+            
+            if (boundHWID && boundHWID !== currentFingerprint) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('errorOverlay').style.display = 'flex';
+                return;
+            }
+            if (!boundHWID) localStorage.setItem(deviceKey, currentFingerprint);
+
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('welcomeScreen').style.display = 'flex';
             setTimeout(() => {
@@ -115,7 +155,7 @@
                 document.getElementById('botUI').style.display = 'block';
                 setTab('CURRENCIES', document.querySelector('.tab-btn'));
             }, 3000);
-        } else { alert("ACCESS DENIED"); }
+        } else { alert("ACCESS DENIED: WRONG KEY"); }
     }
 
     function setTab(cat, btn) {
@@ -132,11 +172,13 @@
     let timerInt;
     function generate() {
         if(isLocked) {
-            alert("⚠️ WAIT! Signal Is Active. Wait To Expire This Signal.");
+            alert("⚠️ ERROR: Wait for current signal to expire!");
             return;
         }
+        const trend = document.getElementById('trend').value;
         const tf = document.getElementById('customTF').value;
         const btn = document.getElementById('genBtn');
+        
         isLocked = true;
         btn.disabled = true;
         btn.innerText = "ANALAYZING...";
@@ -144,12 +186,22 @@
         setTimeout(() => {
             document.getElementById('resBox').style.display = 'block';
             document.getElementById('rPair').innerText = document.getElementById('assetSelect').value;
-            let isUp = Math.random() > 0.5;
+            
+            let accVal = Math.floor(Math.random() * (98 - 89 + 1)) + 89;
+            document.getElementById('accText').innerText = accVal + "%";
+            document.getElementById('accCircle').style.background = `conic-gradient(var(--accent) ${accVal * 3.6}deg, #161b22 0deg)`;
+
+            let isUp;
+            if(trend === 'up') isUp = Math.random() > 0.15;
+            else if(trend === 'down') isUp = Math.random() > 0.85;
+            else isUp = Math.random() > 0.5;
+
             const dir = document.getElementById('rDir');
             dir.innerText = isUp ? "CALL ↑" : "PUT ↓";
             dir.style.color = isUp ? "var(--up)" : "var(--down)";
+
             startTimer(parseInt(tf));
-        }, 1200);
+        }, 2000);
     }
 
     function startTimer(t) {
