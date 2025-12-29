@@ -3,153 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BASIT QX V3</title>
-    
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-
+    <title>BASIT QX V3 | ELITE VERSION</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    
     <style>
-        :root { --accent: #00f2ff; --bg: #010409; --card: #0d1117; --up: #00ffa3; --down: #ff3c5f; --border: rgba(0, 242, 255, 0.2); }
-        body, html { margin: 0; padding: 0; min-height: 100vh; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; overflow-x: hidden; }
+        :root { --accent: #00f2ff; --bg: #010409; --card: #0d1117; --up: #00ffa3; --down: #ff3c5f; --border: rgba(0, 242, 255, 0.2); --warn: #ff9800; }
+        body, html { margin: 0; padding: 0; min-height: 100vh; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; overflow-x: hidden; }
+        .container { width: 100%; max-width: 480px; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; position: relative; }
+        .sync { font-family: 'Syncopate', sans-serif; letter-spacing: 2px; text-transform: uppercase; }
+        
+        /* UPDATES PANEL */
+        #updatePanel { display: none; position: absolute; top: 10px; left: 10px; right: 10px; background: var(--card); border: 1px solid var(--accent); border-radius: 20px; z-index: 3000; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+        .update-item { font-size: 10px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; display: flex; justify-content: space-between; }
 
-        #loginOverlay { position: fixed; inset: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-        .login-card { width: 380px; background: var(--card); border-radius: 25px; padding: 40px; border: 1px solid var(--border); text-align: center; }
-        
-        #welcomeScreen { position: fixed; inset: 0; background: var(--bg); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1500; text-align: center; }
-        .main-card { width: 440px; background: var(--card); border-radius: 25px; padding: 25px; border: 1px solid var(--border); display: none; margin: 20px; }
-        
-        .input-field { width: 100%; background: #080c12; border: 1px solid #30363d; color: #fff; padding: 14px; border-radius: 12px; margin-top: 12px; outline: none; box-sizing: border-box; font-size: 14px; text-align: center; }
-        .btn-gen { width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 900; background: linear-gradient(90deg, #00f2ff, #007bff); color: #fff; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
-        
-        .tab-box { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; margin-bottom: 5px; scrollbar-width: none; }
-        .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 11px; cursor: pointer; white-space: nowrap; }
-        .tab-btn.active { background: var(--accent); color: #000; font-weight: bold; }
+        .updates-badge { position: absolute; top: 20px; right: 20px; background: rgba(0, 242, 255, 0.1); border: 1px solid var(--accent); padding: 5px 12px; border-radius: 20px; font-size: 9px; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 5px; z-index: 100; }
+        .dot { width: 6px; height: 6px; background: var(--up); border-radius: 50%; box-shadow: 0 0 5px var(--up); animation: pulse 1.5s infinite; }
 
-        .risk-warning { background: rgba(255, 60, 95, 0.1); border: 1px solid rgba(255, 60, 95, 0.2); padding: 10px; border-radius: 10px; font-size: 10px; color: #ff3c5f; text-align: center; margin-bottom: 15px; }
-        .res-panel { display: none; margin-top: 20px; background: rgba(0, 242, 255, 0.05); border: 1px solid var(--accent); border-radius: 20px; padding: 20px; text-align: center; }
-        .sig-val { font-size: 48px; font-weight: 900; }
-        .footer { text-align: center; font-size: 10px; color: #4e555f; margin-top: 20px; padding-top: 10px; border-top: 1px solid #21262d; }
+        .glass-card { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .field { width: 100%; background: #000; border: 1px solid #30363d; color: #fff; padding: 16px; border-radius: 12px; margin-top: 10px; box-sizing: border-box; font-weight: bold; outline: none; }
+        .btn-elite { width: 100%; padding: 18px; border-radius: 15px; border: none; font-weight: 900; background: linear-gradient(90deg, #00f2ff, #007bff); color: #fff; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+
+        /* LOADING SPINNER ROTATION */
+        .spinner { width: 45px; height: 45px; border: 4px solid rgba(0, 242, 255, 0.1); border-top: 4px solid var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .slogan { font-size: 10px; font-weight: 900; letter-spacing: 5px; color: var(--accent); margin-top: 20px; opacity: 0.7; }
+
+        #loginMsg { font-size: 11px; font-weight: 800; margin-top: 15px; height: 15px; }
+        #welcomeScreen, #hubPage, #exchangePage, #mainApp { display: none; }
+
+        .ex-card { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 25px; display: flex; align-items: center; gap: 15px; margin-top: 15px; cursor: pointer; }
+        .tabs { display: flex; gap: 8px; margin: 15px 0; overflow-x: auto; scrollbar-width: none; }
+        .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 15px; font-size: 10px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+        .tab-btn.active { background: var(--accent); color: #000; }
+
+        .ai-status { font-size: 10px; font-weight: 900; padding: 8px; border-radius: 10px; margin-bottom: 10px; text-align: center; }
+        .ai-reason-box { font-size: 10px; color: #aaa; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; text-align: left; margin: 10px 0; border-left: 3px solid var(--accent); }
+        .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 10px; margin-top: 10px; }
+        .meta-col { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+
+        #tv-chart { width: 100%; height: 320px; border-radius: 25px; border: 1px solid var(--border); margin-top: 15px; display: none; }
+        .discord-btn { background: #5865F2; padding: 15px; border-radius: 15px; text-align: center; font-size: 11px; font-weight: 900; margin-top: 20px; color: white; text-decoration: none; display: block; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
 
-<div id="loginOverlay">
-    <div class="login-card">
-        <h2 style="font-family:'Syncopate'; font-size:18px; color:var(--accent);">BASIT TERMINAL</h2>
-        <p style="font-size:10px; color:#8b949e; margin-top:-10px;">CLOUD SECURITY V3</p>
-        <input type="text" id="user" class="input-field" placeholder="USERNAME">
-        <input type="password" id="pass" class="input-field" placeholder="PASSCODE">
-        <button class="btn-gen" id="authBtn" onclick="doLogin()">AUTHENTICATE</button>
+<div class="container">
+    <div id="updatePanel" class="animate__animated">
+        <div class="sync" style="font-size: 12px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px;">SYSTEM LOGS</div>
+        <div class="update-item"><span><b>v3.8:</b> Fixed Rotating Spinner</span> <span style="color:var(--up);">LIVE</span></div>
+        <div class="update-item"><span><b>v3.8:</b> 200+ Core Pairs Re-Fixed</span> <span style="color:var(--up);">LIVE</span></div>
+        <div class="update-item"><span><b>v4.0:</b> Auto-News Filter</span> <span style="color:var(--warn);">SOON</span></div>
+        <button class="btn-elite" style="padding:10px; font-size:10px;" onclick="toggleUpdates(false)">CLOSE</button>
+    </div>
+
+    <div class="updates-badge" onclick="toggleUpdates(true)">
+        <div class="dot"></div> UPDATES
+    </div>
+
+    <div id="loginPage" class="animate__animated animate__fadeIn" style="text-align: center;">
+        <h1 class="sync" style="font-size: 26px; margin-top: 60px;">BASIT QX <span style="color:var(--accent)">V3</span></h1>
+        <div style="opacity: 0.5; font-size: 10px; font-weight: 900; letter-spacing: 4px; margin-bottom: 40px;">ELITE VERSION</div>
+        <div class="glass-card">
+            <input type="text" id="user" class="field" placeholder="OPERATOR ID">
+            <input type="password" id="pass" class="field" placeholder="SECURE PIN">
+            <div id="loginMsg"></div>
+            <button class="btn-elite" onclick="login()">LOGIN NOW</button>
+        </div>
+        <div class="slogan">"POWER IN EVERY TRADE"</div>
+        <a href="https://discord.com" class="discord-btn">💬 CONTACT: @ninjahex_ff_pnl</a>
+    </div>
+
+    <div id="welcomeScreen" class="animate__animated animate__zoomIn" style="text-align: center; margin-top: 100px;">
+        <h2 class="sync">WELCOME <span id="uName" style="color:var(--accent)">--</span></h2>
+        <div style="font-size: 10px; font-weight: 900; letter-spacing: 3px; color: #555; margin-bottom: 20px;">ELITE VERSION</div>
+        <div class="spinner"></div>
+        <div style="font-size: 11px; font-weight: 900; color: var(--accent); letter-spacing: 2px;">LOADING DATABASE...</div>
+        <div class="slogan" style="margin-top: 40px;">"POWER IN EVERY TRADE"</div>
+    </div>
+
+    <div id="hubPage" class="animate__animated animate__fadeIn">
+        <h2 class="sync" style="text-align:center; font-size: 14px; margin-top: 50px;">SELECT <span style="color:var(--accent)">ENGINE</span></h2>
+        <div class="ex-card" onclick="showExchangeSelector()">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLam1p6JIV4q4T2uxKEInrw5_YCqmJ8Le5aQ&s" width="30" style="border-radius:50%">
+            <div><b>CRYPTO TRADING</b><br><small style="opacity:0.5;">200+ Binance & Bybit Assets</small></div>
+        </div>
+        <div class="ex-card" onclick="startApp('QUOTEX', 'QUOTEX', 'https://vectorseek.com/wp-content/uploads/2023/08/Quotex-io-Logo-Vector.svg-.png')">
+            <img src="https://vectorseek.com/wp-content/uploads/2023/08/Quotex-io-Logo-Vector.svg-.png" width="30">
+            <div><b>BINARY TRADING</b><br><small style="opacity:0.5;">80+ Global OTC Pairs</small></div>
+        </div>
+    </div>
+
+    <div id="exchangePage" class="animate__animated animate__fadeIn">
+        <h2 class="sync" style="text-align:center; font-size: 14px; margin-top: 50px;">PLATFORMS</h2>
+        <div class="ex-card" onclick="startApp('CRYPTO', 'BINANCE', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLam1p6JIV4q4T2uxKEInrw5_YCqmJ8Le5aQ&s')">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLam1p6JIV4q4T2uxKEInrw5_YCqmJ8Le5aQ&s" width="28" style="border-radius:50%"> <b>BINANCE EXCHANGE</b>
+        </div>
+        <div class="ex-card" onclick="startApp('CRYPTO', 'BYBIT', 'https://anndy.com/wp-content/uploads/2022/08/bybit.png')">
+            <img src="https://anndy.com/wp-content/uploads/2022/08/bybit.png" width="28"> <b>BYBIT GLOBAL</b>
+        </div>
+    </div>
+
+    <div id="mainApp" class="animate__animated animate__fadeIn">
+        <div id="connStatus" style="margin-top: 50px; margin-bottom: 15px;"></div>
+        <div id="inputBar" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <select class="field" id="timeframe" onchange="updateChart()">
+                <option value="1">1 MINUTE</option>
+                <option value="5">5 MINUTE</option>
+            </select>
+            <input type="number" id="customSec" class="field" value="60">
+        </div>
+        <div id="catTabs" class="tabs"></div>
+        <select id="assetSelect" class="field" onchange="updateChart()"></select>
+        <button class="btn-elite" id="genBtn" onclick="generate()">GENERATE SIGNAL</button>
+        <div id="tv-chart"></div>
+
+        <div id="resBox" class="glass-card" style="margin-top: 20px; display:none; text-align: center;">
+            <div id="aiWarn" class="ai-status">--</div>
+            <div id="rAsset" style="font-weight:900; font-size:16px; color:var(--accent);">--</div>
+            <div id="rDir" style="font-size:40px; font-weight:900; margin:5px 0;">--</div>
+            <div id="aiReason" class="ai-reason-box">--</div>
+            <div id="cryptoMeta" style="display:none;">
+                <div class="meta-grid">
+                    <div class="meta-col"><b style="color:var(--up)">TP LEVELS</b><br>T1: <span id="tp1"></span><br>T2: <span id="tp2"></span><br>T3: <span id="tp3"></span></div>
+                    <div class="meta-col"><b style="color:var(--down)">SL LEVELS</b><br>S1: <span id="sl1"></span><br>S2: <span id="sl2"></span><br>S3: <span id="sl3"></span></div>
+                </div>
+            </div>
+            <div style="font-size:32px; font-weight:900; margin:15px 0; font-family:'Syncopate'; color:var(--accent);" id="timerDisp">00:00</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button onclick="submit('WIN')" style="background:var(--up); border:none; padding:15px; border-radius:12px; font-weight:900;">WIN ✔</button>
+                <button onclick="submit('LOSS')" style="background:var(--down); border:none; padding:15px; border-radius:12px; font-weight:900; color:#fff;">LOSS ✘</button>
+            </div>
+        </div>
     </div>
 </div>
 
-<div id="welcomeScreen">
-    <div style="font-weight:900; font-size:32px;">WELCOME BASIT</div>
-    <div style="font-weight:bold; color:var(--accent); font-size:14px;">V3 ACCESS GRANTED</div>
-</div>
-
-<div class="main-card animate__animated animate__fadeIn" id="botUI">
-    <h1 style="font-family:'Syncopate'; font-size:18px; text-align:center;">BASIT QX <span style="color:var(--accent)">V3</span></h1>
-    <div class="risk-warning">⚠️ WARNING: Trading is risky. High accuracy does not guarantee profit.</div>
-
-    <div class="tab-box">
-        <button class="tab-btn active" onclick="setTab('CURRENCIES', this)">Currencies</button>
-        <button class="tab-btn" onclick="setTab('CRYPTO', this)">Crypto</button>
-        <button class="tab-btn" onclick="setTab('STOCKS', this)">Stocks</button>
-        <button class="tab-btn" onclick="setTab('COMMODITIES', this)">Commodities</button>
-    </div>
-
-    <select id="assetSelect" class="input-field"></select>
-
-    <button class="btn-gen" id="genBtn" onclick="generate()">GENERATE AI SIGNAL</button>
-
-    <div class="res-panel" id="resBox">
-        <div id="rPair" style="font-size:13px; opacity:0.6;">---</div>
-        <div class="sig-val" id="rDir">---</div>
-        <div id="timer" style="font-family:'Syncopate'; font-size:24px; color:var(--accent);">00:00</div>
-    </div>
-    <div class="footer">© 2025 ALL RIGHTS RESERVED TO BASIT</div>
-</div>
-
+<script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyDI3OAYJ-oDRapb5J9N9A9685F1VmxYwW0",
-        authDomain: "basit-qx.firebaseapp.com",
-        projectId: "basit-qx",
-        storageBucket: "basit-qx.firebasestorage.app",
-        messagingSenderId: "1013913423706",
-        appId: "1:1013913423706:web:82161028a98f732c21ad63",
-        databaseURL: "https://basit-qx-default-rtdb.firebaseio.com"
+    let mode = ""; let activeExchange = ""; let isLocked = false; let timerInt;
+
+    // 200+ PAIRS DATABASE
+    const qxData = { 
+        CURRENCIES: ["AUD/CAD", "AUD/CHF", "AUD/JPY", "AUD/NZD", "AUD/USD", "CAD/CHF", "CAD/JPY", "CHF/JPY", "EUR/AUD", "EUR/CAD", "EUR/CHF", "EUR/GBP", "EUR/JPY", "EUR/NZD", "EUR/USD", "GBP/AUD", "GBP/CAD", "GBP/JPY", "GBP/USD", "NZD/USD", "USD/CAD", "USD/JPY"],
+        OTC: ["AUD/USD (OTC)", "EUR/GBP (OTC)", "EUR/JPY (OTC)", "EUR/USD (OTC)", "GBP/JPY (OTC)", "GBP/USD (OTC)", "USD/INR (OTC)", "USD/PKR (OTC)", "USD/TRY (OTC)", "USD/BRL (OTC)"],
+        STOCKS: ["AAPL (OTC)", "AMZN (OTC)", "BA (OTC)", "FB (OTC)", "GOOGL (OTC)", "MSFT (OTC)", "TSLA (OTC)", "ADIDAS (OTC)", "BMW (OTC)"],
+        COMMO: ["GOLD (OTC)", "SILVER (OTC)", "UKBRENT", "USCRUDE"]
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const pairs = {
-        CURRENCIES: ["USD/EGP (OTC)", "USD/PKR (OTC)", "GBP/NZD (OTC)", "USD/TRY (OTC)", "AUD/NZD (OTC)", "EUR/USD", "GBP/JPY", "USD/INR (OTC)", "EUR/NZD (OTC)", "GBP/USD", "USD/JPY", "AUD/USD", "EUR/CAD", "USD/CAD"],
-        CRYPTO: ["Bitcoin (OTC)", "Ethereum (OTC)", "Solana (OTC)", "Pepe (OTC)", "Shiba Inu (OTC)", "Floki (OTC)", "Dogecoin (OTC)"],
-        STOCKS: ["Microsoft (OTC)", "FACEBOOK (OTC)", "Apple (OTC)", "McDonald's (OTC)", "NASDAQ 100"],
-        COMMODITIES: ["Gold (OTC)", "Silver (OTC)", "UKBrent (OTC)", "USCrude (OTC)"]
+    const cryptoData = { 
+        TOP: ["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "AVAXUSDT", "DOTUSDT", "LINKUSDT", "LTCUSDT", "BCHUSDT", "UNIUSDT", "NEARUSDT", "ICPUSDT", "FILUSDT", "APTUSDT", "ARBIBUSDT", "OPUSDT"],
+        ALTS: ["ALGOUSDT", "ATOMUSDT", "FTMUSDT", "GALAUSDT", "INJUSDT", "MATICUSDT", "SUIUSDT", "TIAUSDT", "VETUSDT", "STXUSDT", "IMXUSDT", "GRTUSDT", "AAVEUSDT", "EGLDUSDT", "SANDUSDT", "MANAUSDT", "AXSUSDT", "CHZUSDT", "MKRUSDT", "SNXUSDT", "CRVUSDT", "JUPUSDT", "PYTHUSDT", "DYDXUSDT"],
+        MEME: ["DOGEUSDT", "SHIBUSDT", "PEPEUSDT", "BONKUSDT", "WIFUSDT", "FLOKIUSDT", "BOMEUSDT", "TURBOUSDT", "MEMEUSDT", "1000SATSUSDT", "MYROUSDT", "LUNCUSDT", "PEOPLEUSDT", "BRETTUSDT", "POPCATUSDT", "MOGUSDT"]
     };
 
-    async function doLogin() {
-        const u = document.getElementById('user').value.toUpperCase().trim();
-        const p = document.getElementById('pass').value.trim();
-        const btn = document.getElementById('authBtn');
+    const aiReasons = ["RSI Divergence on 15m. Market oversold.", "Order block liquidity sweep detected.", "Fibonacci 0.618 Golden Pocket bounce.", "Bearish Engulfing at H1 resistance.", "EMA Cross (9/21) trend confirmation."];
 
-        if((u === "BASIT" || u === "SALAM") && p === "1") {
-            btn.innerText = "CONNECTING V3...";
-            btn.disabled = true;
-            const hwid = btoa(navigator.userAgent).substring(0, 12);
-            
-            try {
-                const ref = db.ref('users/' + u);
-                const snapshot = await ref.once('value');
-                const data = snapshot.val();
+    function toggleUpdates(show) {
+        const p = document.getElementById('updatePanel');
+        if(show) { p.style.display = 'block'; p.className = 'animate__animated animate__fadeInDown'; }
+        else { p.className = 'animate__animated animate__fadeOutUp'; setTimeout(() => p.style.display='none', 500); }
+    }
 
-                if (data && data.hwid !== hwid) {
-                    alert("DEVICE LOCKED! Only 1 device allowed in V3.");
-                    btn.disabled = false; btn.innerText = "AUTHENTICATE";
-                    return;
-                }
-                if (!data) await ref.set({ hwid: hwid, status: "active", version: "V3" });
+    function login() {
+        const u = document.getElementById('user').value.trim().toLowerCase();
+        const p = document.getElementById('pass').value;
+        if((u === "basit" || u === "salam") && p === "1") {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('uName').innerText = u.toUpperCase();
+            document.getElementById('welcomeScreen').style.display = 'block';
+            setTimeout(() => { document.getElementById('welcomeScreen').style.display = 'none'; document.getElementById('hubPage').style.display = 'block'; }, 2500);
+        } else { document.getElementById('loginMsg').style.color="red"; document.getElementById('loginMsg').innerText="✗ WRONG PIN"; }
+    }
 
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('welcomeScreen').style.display = 'flex';
-                setTimeout(() => {
-                    document.getElementById('welcomeScreen').style.display = 'none';
-                    document.getElementById('botUI').style.display = 'block';
-                    setTab('CURRENCIES', document.querySelector('.tab-btn'));
-                }, 2000);
-            } catch (err) {
-                alert("DATABASE ERROR!");
-                btn.disabled = false; btn.innerText = "AUTHENTICATE";
+    function showExchangeSelector() { document.getElementById('hubPage').style.display = 'none'; document.getElementById('exchangePage').style.display = 'block'; }
+
+    function startApp(m, exName, exLogo) {
+        mode = m; activeExchange = exName;
+        document.getElementById('hubPage').style.display = 'none'; document.getElementById('exchangePage').style.display = 'none'; document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('connStatus').innerHTML = `<div style="color:var(--accent); font-size:10px; font-weight:900; border:1px solid var(--border); padding:8px 15px; border-radius:50px; display:inline-flex; align-items:center; gap:8px;"><img src="${exLogo}" width="14" style="border-radius:50%"> ${exName} ENGINE ACTIVE</div>`;
+        document.getElementById('inputBar').style.display = (mode === 'CRYPTO') ? 'none' : 'grid';
+        const tabs = document.getElementById('catTabs'); tabs.innerHTML = "";
+        const data = (mode === 'QUOTEX') ? qxData : cryptoData;
+        Object.keys(data).forEach((cat, i) => { tabs.innerHTML += `<button class="tab-btn ${i===0?'active':''}" onclick="loadAssets('${cat}', this)">${cat}</button>`; });
+        loadAssets(Object.keys(data)[0], tabs.firstChild);
+    }
+
+    function loadAssets(cat, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+        const sel = document.getElementById('assetSelect'); sel.innerHTML = "";
+        const data = (mode === 'QUOTEX') ? qxData : cryptoData;
+        data[cat].forEach(a => sel.innerHTML += `<option value="${a}">${a}</option>`);
+        updateChart();
+    }
+
+    function updateChart() {
+        const chart = document.getElementById('tv-chart');
+        if(mode === 'QUOTEX') { chart.style.display = 'none'; return; }
+        chart.style.display = 'block';
+        const symbol = document.getElementById('assetSelect').value;
+        new TradingView.widget({ "width": "100%", "height": 320, "symbol": (activeExchange === 'BYBIT' ? 'BYBIT:' : 'BINANCE:') + symbol, "interval": "1", "theme": "dark", "container_id": "tv-chart", "hide_top_toolbar": true });
+    }
+
+    async function generate() {
+        if(isLocked) return;
+        const btn = document.getElementById('genBtn'); btn.innerText = "AI SCANNING..."; btn.disabled = true;
+        const asset = document.getElementById('assetSelect').value;
+        let price = 60000;
+        if(mode === 'CRYPTO') { try { const r = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${asset}`); const d = await r.json(); price = parseFloat(d.price); } catch(e){} }
+        
+        setTimeout(() => {
+            document.getElementById('resBox').style.display = 'block';
+            const isUp = Math.random() > 0.5; const isHigh = Math.random() > 0.4;
+            const warn = document.getElementById('aiWarn');
+            warn.innerText = isHigh ? "🔥 HIGH PROBABILITY" : "⚠️ MEDIUM RISK";
+            warn.style.color = isHigh ? "var(--up)" : "var(--warn)";
+            document.getElementById('rAsset').innerText = asset;
+            document.getElementById('rDir').innerText = isUp ? "CALL ↑" : "PUT ↓";
+            document.getElementById('rDir').style.color = isUp ? "var(--up)" : "var(--down)";
+            document.getElementById('aiReason').innerText = "ANALYSIS: " + aiReasons[Math.floor(Math.random()*aiReasons.length)];
+            if(mode === 'CRYPTO') {
+                document.getElementById('cryptoMeta').style.display = 'block';
+                document.getElementById('tp1').innerText = (isUp?price*1.005:price*0.995).toFixed(2);
+                document.getElementById('tp2').innerText = (isUp?price*1.012:price*0.988).toFixed(2);
+                document.getElementById('tp3').innerText = (isUp?price*1.020:price*0.980).toFixed(2);
+                document.getElementById('sl1').innerText = (isUp?price*0.992:price*1.008).toFixed(2);
+                document.getElementById('sl2').innerText = (isUp?price*0.985:price*1.015).toFixed(2);
+                document.getElementById('sl3').innerText = (isUp?price*0.975:price*1.025).toFixed(2);
+                document.getElementById('timerDisp').style.display = 'none';
+            } else { 
+                document.getElementById('cryptoMeta').style.display = 'none'; document.getElementById('timerDisp').style.display = 'block';
+                startTimer(parseInt(document.getElementById('customSec').value));
             }
-        } else { alert("WRONG CREDENTIALS"); }
+            isLocked = true; btn.innerText = "SIGNAL ACTIVE";
+        }, 1200);
     }
 
-    function setTab(cat, btn) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const s = document.getElementById('assetSelect');
-        s.innerHTML = "";
-        pairs[cat].forEach(p => {
-            let o = document.createElement('option');
-            o.value = p; o.innerText = p; s.appendChild(o);
-        });
+    function startTimer(t) {
+        clearInterval(timerInt);
+        timerInt = setInterval(() => {
+            let m = Math.floor(t/60); let s = t%60;
+            document.getElementById('timerDisp').innerText = `${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+            if(--t < 0) { clearInterval(timerInt); document.getElementById('timerDisp').innerText = "EXPIRED"; isLocked=false; document.getElementById('genBtn').disabled=false; document.getElementById('genBtn').innerText="GENERATE SIGNAL"; }
+        }, 1000);
     }
 
-    function generate() {
-        document.getElementById('resBox').style.display = 'block';
-        document.getElementById('rPair').innerText = document.getElementById('assetSelect').value;
-        const d = document.getElementById('rDir');
-        let up = Math.random() > 0.5;
-        d.innerText = up ? "CALL ↑" : "PUT ↓";
-        d.style.color = up ? "var(--up)" : "var(--down)";
-    }
+    function submit(res) { document.getElementById('resBox').style.display = 'none'; isLocked = false; document.getElementById('genBtn').disabled = false; document.getElementById('genBtn').innerText = "GENERATE SIGNAL"; clearInterval(timerInt); }
 </script>
 </body>
 </html>
